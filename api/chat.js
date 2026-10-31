@@ -113,6 +113,20 @@ export default async function handlerChat(req, res) {
       });
     }
 
+    const isHighDemand = 
+      e?.status === 503 || 
+      e?.message?.includes("503") || 
+      e?.message?.includes("UNAVAILABLE") ||
+      e?.message?.includes("overloaded") ||
+      e?.message?.includes("High demand") ||
+      e?.message?.includes("capacity");
+
+    if (isHighDemand) {
+      return res.status(503).json({
+        error: "Server Gemini sedang mengalami lonjakan trafik (High Demand). Silakan coba kirim ulang dalam beberapa detik."
+      });
+    }
+
     return res.status(500).json({
       error: "Terjadi kendala teknis pada server. Silakan coba lagi."
     });
